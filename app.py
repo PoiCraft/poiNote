@@ -1,4 +1,4 @@
-from flask import Flask,request,url_for,redirect
+from flask import Flask,request,url_for,redirect,render_template
 
 import json
 from random import randint
@@ -12,7 +12,6 @@ if not os.path.isdir('notes'):
 app = Flask(__name__)
 
 name_list = '1244567890abcdefghijklmnopqrstuvwxyz'
-pass_list = '1234567890abcdefghijklmnopqrstivwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-@)(!;:'
 
 # Index
 @app.route('/', methods = ['GET'])
@@ -21,11 +20,7 @@ def index():
     name = ''
     for _ in range(name_length):
         name += name_list[randint(0,len(name_list) - 1)]
-    # get password
-    passwd = ''
-    for _ in range(pass_length):
-        passwd += pass_list[randint(0,len(pass_list) - 1)]
-    return redirect(url_for('io',name = name) + '#' + passwd)
+    return redirect(url_for('io',name = name))
 
 
 # Basic I/O
@@ -35,8 +30,7 @@ def io(name):
     if not os.path.isfile('notes/%s'%name):
         with open('notes/%s'%name,'w') as f:
             f.write(json.dumps({
-                'title': '',
-                'md5': '',
+                'title': 'Untitled Note',
                 'body': '',
                 }))
             f.close()
@@ -45,12 +39,14 @@ def io(name):
         with open('notes/%s'%name,'r') as f:
             body = f.read()
             f.close()
-            return body
+            note = json.loads(body)
+        return render_template('note.html', 
+                note = note,
+                name = name)
     if request.method == 'POST':
         with open('notes/%s'%name,'w') as f:
             f.write(json.dumps({
                 'title': request.form['title'],
-                'md5': request.form['md5'],
                 'body': request.form['body']
                 }))
             f.close()
