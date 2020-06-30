@@ -34,7 +34,11 @@ def io(name):
     note_new = False
     if not os.path.isfile('notes/%s'%name):
         with open('notes/%s'%name,'w') as f:
-            f.write(json.dumps({'md5':'','body':''}))
+            f.write(json.dumps({
+                'title': '',
+                'md5': '',
+                'body': '',
+                }))
             f.close()
         note_new = True
     if request.method == 'GET':
@@ -45,8 +49,9 @@ def io(name):
     if request.method == 'POST':
         with open('notes/%s'%name,'w') as f:
             f.write(json.dumps({
-                'md5':request.form['md5'],
-                'body':request.form['body']
+                'title': request.form['title'],
+                'md5': request.form['md5'],
+                'body': request.form['body']
                 }))
             f.close()
             return {'msg':'OK'}
