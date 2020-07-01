@@ -29,31 +29,37 @@
 	<input type='text' id='title' autocomplete="off" value="{{ note.title }}" oninput='changeTitle()'/>
 		<small>@{{ name }}</small>
 		<button id='save' onclick='post()'>Save</button>
+		<small id='status_p'>Saved</small>
 	</p>
 	<textarea id='note' rows="128" oninput='changeNote()'>{{ note.body }}</textarea>
 	<script>
 		title = document.getElementsByID('title')
 		note = document.getElementsByID('note')
 		button = document.getElementsByID('save')
+		status_p = document.getElementsByID('status_p')
 		function changeTitle() {
 			document.title = title.value + ' @ {{ name }}'
-			save.innerText = 'Save'
+			status_p.innerHTML = 'Unsaved'
 		}
 		function changeNote() {
-			save.innerText = 'Save'
+			status_p.innerText = 'Unsaved'
 		}
 		function post() {
+			status_p.innerText = 'Saving'
 			data = 'title=' + title.value +'&body=' + note.value 
 			var xmlhttp = new XMLHttpRequest()
 			xmlhttp.onreadystatechange=function() {
     				if (xmlhttp.readyState==4 && xmlhttp.status==200)  {
-        				save.innerText = 'Saved'
+        				status_p.innerText = 'Saved'
     				}
 			}
 			xmlhttp.open('POST','',true)
 			xmlhttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
 			xmlhttp.send(data)
 		}
+	</script>
+	<script>
+		setInterval('post()',20*1000)
 	</script>
 </body>
 </html>
