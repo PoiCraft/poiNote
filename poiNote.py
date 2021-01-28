@@ -20,12 +20,11 @@ def index():
     name = ''
     for _ in range(name_length):
         name += name_list[randint(0,len(name_list) - 1)]
-    return redirect(url_for('io',name = name))
-
+    return redirect(url_for('edit',name = name))
 
 # Basic I/O
-@app.route('/<string:name>.note', methods = ['GET','POST'])
-def io(name):
+@app.route('/<string:name>.note+', methods = ['GET','POST'])
+def edit(name):
     note_new = False
     if not os.path.isfile('notes/%s'%name):
         with open('notes/%s'%name,'w') as f:
@@ -40,9 +39,10 @@ def io(name):
             body = f.read()
             f.close()
             note = json.loads(body)
-        return render_template('note.html', 
+        return render_template('edit.html', 
                 note = note,
-                name = name)
+                name = name,
+                edit= True)
     if request.method == 'POST':
         with open('notes/%s'%name,'w') as f:
             f.write(json.dumps({
@@ -51,6 +51,26 @@ def io(name):
                 }))
             f.close()
             return {'msg':'OK'}
+
+# Read
+@app.route('/<string:name>.note', methods = ['GET'])
+def read(name):
+    if not os.path.isfile('notes/%s'%name):
+        with open('notes/%s'%name,'w') as f:
+            f.write(json.dumps({
+                'title': 'Untitled Note',
+                'body': '',
+                }))
+            f.close()
+    with open('notes/%s'%name,'r') as f:
+        body = f.read()
+        f.close()
+        note = json.loads(body)
+    return render_template('note.html', 
+            note = note,
+            name = name,
+            edit = False)
+
 
 # Debug
 if __name__ == '__main__':
