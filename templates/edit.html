@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress HtmlFormInputWithoutLabel -->
 <html lang="zh-CN">
 
 <head>
@@ -31,13 +32,13 @@
 		<button id='save' onclick='post()'>Save</button>
 		<small id='status_p'>Saved</small>
 	</p>
-    <p><small>Read Only at <a href="{{ name }}.note" target="_blank">{{ name }}</a></small></p>
+    <p><small>Read Only as <a href="{{ name }}.note" target="_blank">Text</a> or <a href="{{ name }}.html" target="_blank">HTML</a></small></p>
 	<textarea id='note' rows="128" oninput='changeNote()'>{{ note.body }}</textarea>
 	<script>
-		title = document.getElementsByID('title')
-		note = document.getElementsByID('note')
-		button = document.getElementsByID('save')
-		status_p = document.getElementsByID('status_p')
+		title = document.getElementById('title')
+		note = document.getElementById('note')
+		button = document.getElementById('save')
+		status_p = document.getElementById('status_p')
 		function changeTitle() {
 			document.title = title.value + ' @ {{ name }}'
 			status_p.innerHTML = 'Unsaved'
@@ -47,16 +48,16 @@
 		}
 		function post() {
 			status_p.innerText = 'Saving'
-			data = 'title=' + title.value +'&body=' + note.value 
-			var xmlhttp = new XMLHttpRequest()
-			xmlhttp.onreadystatechange=function() {
-    				if (xmlhttp.readyState==4 && xmlhttp.status==200)  {
+            const data = 'title=' + title.value + '&body=' + note.value;
+            const xml_http = new XMLHttpRequest();
+            xml_http.onreadystatechange=function() {
+    				if (xml_http.readyState===4 && xml_http.status===200)  {
         				status_p.innerText = 'Saved'
     				}
 			}
-			xmlhttp.open('POST','',true)
-			xmlhttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
-			xmlhttp.send(data)
+			xml_http.open('POST','',true)
+			xml_http.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
+			xml_http.send(data)
 		}
 	</script>
 	<script>

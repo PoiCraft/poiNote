@@ -26,6 +26,6 @@
 </head>
 <body>
 	<h1>{{ note.title }}</h1>
-	<pre id='note'>{{ note.body|e }}</pre>
+	<div id='note'>{{ note.body|safe }}</div>
 </body>
 </html>
