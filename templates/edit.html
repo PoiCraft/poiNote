@@ -32,7 +32,9 @@
 		<button id='save' onclick='post()'>Save</button>
 		<small id='status_p'>Saved</small>
 	</p>
-    <p><small>Read Only as <a href="{{ name }}.note" target="_blank">Text</a> or <a href="{{ name }}.html" target="_blank">HTML</a></small></p>
+    <p>
+        <small>Read Only as <a href="{{ name }}.note" target="_blank">Text</a> or <a href="{{ name }}.html" target="_blank">HTML</a> | <a href="{{ name }}.ws">Live Edit</a></small>
+    </p>
 	<textarea id='note' rows="128" oninput='changeNote()'>{{ note.body }}</textarea>
 	<script>
 		title = document.getElementById('title')

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<!--suppress HtmlFormInputWithoutLabel -->
+<html lang="zh-CN">
+
+<head>
+	<title>{{ note.title }} @ {{ name }}</title>
+	<meta charset="utf-8" />
+	<meta name="viewport"
+	content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <script src="/static/md5.js"></script>
+	<style>
+        	body {
+            		padding: 2%;
+            		margin-left: auto;
+            		margin-right: auto;
+        	}
+
+        	img {
+           		 max-width: 100%;
+        	}
+
+		textarea {
+			width: 	98%;
+			margin-left: auto;
+			margin-right: auto;
+		}
+    	</style>
+</head>
+<body>
+	<p>
+	<input type='text' id='title' autocomplete="off" value="{{ note.title }}" oninput='changeNote()'/>
+		<small>@{{ name }}</small>
+	</p>
+    <p><small>Read Only as <a href="{{ name }}.note" target="_blank">Text</a> or <a href="{{ name }}.html" target="_blank">HTML</a></small></p>
+	<textarea id='note' rows="128" oninput='changeNote()'>{{ note.body }}</textarea>
+	<script>
+        let t = md5(title.value+note.value);
+        let t_old = t;
+
+        const ws = new WebSocket(`ws://${window.location.host}/ws`);
+
+        ws.onmessage = function (evt){
+            const data = JSON.parse(evt.data);
+            t = data["md5"];
+            if (t !== t_old){
+                if (data["name"] === "{{ name }}"){
+                    title.value = data["title"];
+                    note.value = data["body"]
+                    t_old = t
+                }
+            }
+        }
+
+		title = document.getElementById('title')
+		note = document.getElementById('note')
+
+		function changeNote(){
+            document.title = title.value + ' @ {{ name }}'
+            const t_new = md5(title.value+note.value);
+            if (t_new !== t_old){
+                t_old = t_new
+                ws.send(
+                    JSON.stringify(
+                        {
+                            "name": "{{ name }}",
+                            "title": title.value,
+                            "body": note.value
+                        }
+                    )
+                )
+            }
+        }
+	</script>
+</body>
+</html>
